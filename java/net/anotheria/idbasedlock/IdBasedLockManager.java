@@ -10,12 +10,15 @@ import java.io.Serializable;
 public interface IdBasedLockManager<K> extends Serializable {
     /**
      * Gets the lock for the specified id. Does not locks but just returns the lock object.
-     *
      * @param id the id to get the lock for.
-     *
      * @return the lock object.
      */
     IdBasedLock<K> obtainLock(K id);
+
+	/**
+	 * Releases the lock.
+	 * @param lock
+	 */
 
     void releaseLock(IdBasedLock<K> lock);
 }
