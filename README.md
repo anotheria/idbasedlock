@@ -46,8 +46,8 @@ Luckily id-based-locking solves exactly this problem by locking the concept of t
 	
 	public void sendMessageSafe(UserId from, UserId to, Message message){
 
-		IdBasedLock<UserId> minLock = manager.obtainLock (min(from,to));
-		IdBasedLock<UserId> maxLock = manager.obtainLock (max(from,to));
+		IdBasedLock<UserId> minLock = manager.obtainLock(min(from,to));
+		IdBasedLock<UserId> maxLock = manager.obtainLock(max(from,to));
 		try{
 			minLock.lock();
 			maxLock.lock();
@@ -96,4 +96,19 @@ and again a safe version:
 	}
 ```
 
+
+## How to get
+
+Convinced? Add to your pom.xml
+```xml
+<dependency>
+  <groupId>net.anotheria</groupId>
+  <artifactId>idbasedlock</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+
+or fork and play for yourself!
+
+ENJOY.
 
