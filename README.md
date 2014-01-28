@@ -28,7 +28,7 @@ Just to illustrate what could possible get wrong in getMailbox, here is an imple
 ```java
 	private Mailbox getMailbox(UserId id){
 		Mailbox mailbox = cache.get(id);
-		if (mailbox==null){
+		if (mailbox == null){
 			mailbox = new Mailbox();
 			cache.put(id, mailbox);
 		}
@@ -69,7 +69,7 @@ One might say, this example is to complicated, because it modifies two objects a
 ```java
 	public void increaseCounterUnsafe(String id){
 		Counter c = counterCache.get(id);
-		if (c==null){
+		if (c == null){
 			c = new Counter();
 			counterCache.put(id, c);
 		}
@@ -84,7 +84,7 @@ and again a safe version:
 		lock.lock();
 		try{
 			Counter c = counterCache.get(id);
-			if (c==null){
+			if (c == null){
 				c = new Counter();
 				counterCache.put(id, c);
 			}
