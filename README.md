@@ -57,8 +57,8 @@ Luckily id-based-locking solves exactly this problem by locking the concept of t
 			sendersBox.addIncomingMessage(message);
 			recipientsBox.addSentMessage(message);
 		}finally{
-			maxLock.lock();
-			minLock.lock();
+			maxLock.unlock();
+			minLock.unlock();
 			
 		}
 	}
