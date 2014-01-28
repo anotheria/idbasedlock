@@ -1,7 +1,7 @@
 idbasedlock
 ===========
 
-== Why do we need another lock?
+## Why do we need another lock?
 
 Java has great support for concurrency and locking, probably the best support a modern language offers. Not only the language has builtin synchronization, but there are also utilities like CountDownLatches, Semaphores, Barriers, and other locks based on the wonderful AQS framework. However, there is one case that is not supported directly, which is when you actually need to lock not an _object itself_, but the _idea of the object_.
 
