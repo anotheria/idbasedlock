@@ -3,7 +3,7 @@ idbasedlock
 
 ## Why do we need another lock?
 
-Java has great support for concurrency and locking, probably the best support a modern language offers. Not only the language has builtin synchronization, but there are also utilities like CountDownLatches, Semaphores, Barriers, and other locks based on the wonderful AQS framework. However, there is one case that is not supported directly, which is when you actually need to lock not an _object itself_, but the _idea of the object_.
+Java has great support for concurrency and locking, probably the best support a modern language offers. Not only the language has builtin synchronization, but there are also utilities like CountDownLatches, Semaphores, Barriers, and other locks based on the wonderful AQS framework. However, there is one case that is not supported directly, which is when you actually need to lock not an **object itself**, but the **idea of the object**.
 
 Imagine following example, you have a service that is maintaining mailboxes. It has a method to add a new message to a mailbox, and a method to retrieve a message from it. Of course you are multithreaded, since you want to serve tons of users sending gazillions of messages to each other. To protect the mailbox from corruption you want to restrict the number of the threads that access that mailbox to one:
 
@@ -37,7 +37,7 @@ Just to illustrate what could possible get wrong in getMailbox, here is an imple
 ```
 
 Its obvious, that its unsafe, because it allows to parallel thread to create a new mailbox. Two mailboxes would exist in the system, and no one knows which one will survive. 
-Of course you can solve this by locking the new mailbox creation, which brings back our problem with performance or do some funky ConcurrentMap style operations on your cache: putIfAbsent and stuff. But imagine that you don’t create the mailbox from scratch, but also load from database. This will be much harder to synchronize properly (and to prevent from parallel requests to the database.
+Of course you can solve this by locking the new mailbox creation, which brings back our problem with performance or do some funky ConcurrentMap style operations on your cache: _putIfAbsent_ and stuff. But imagine that you don’t create the mailbox from scratch, but also load from database. This will be much harder to synchronize properly (and to prevent from parallel requests to the database.
 
 Luckily id-based-locking solves exactly this problem by locking the concept of the mailbox instead of the mailbox object. 
 ```java
