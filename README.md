@@ -110,5 +110,14 @@ Convinced? Add to your pom.xml
 
 or fork and play for yourself!
 
+## Which lock?
+
+Ah, you already looked at the code and noticed, that there are two implementations available: 
+__SafeIdBasedLockManager__ and __UnsafeIdBasedLockManager__. The difference is the performance and the tradeof. In 99.9% of the use cases you should use SafeIdBasedLockManager. UnsafeIdBasedLockManager doesn't lock the process of obtaining the lock, and is therefore maybe 1 nanosecond faster, but it also has a race condition, so it shouldn't be used in highly concurrent environments. In other words: stick with SafeIdBasedLockManager.
+
+
+
+
+
 ENJOY.
 
