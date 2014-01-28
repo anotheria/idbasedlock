@@ -8,7 +8,7 @@ Java has great support for concurrency and locking, probably the best support a 
 Imagine following example, you have a service that is maintaining mailboxes. It has a method to add a new message to a mailbox, and a method to retrieve a message from it. Of course you are multithreaded, since you want to serve tons of users sending gazillions of messages to each other. To protect the mailbox from corruption you want to restrict the number of the threads that access that mailbox to one:
 
 ```java
-	public void sendMessage(UserId from, UserId to, Message message){
+	public void sendMessage(UserId from, UserId to, Message message) { 
 		Mailbox sendersBox = getMailbox(from);
 		Mailbox recipientsBox = getMailbox(to);
 		min(sendersBox,recipientsBox).lock();
@@ -26,9 +26,9 @@ Well it depends on what the _getMailbox()_ method actually does. If it guarantee
 
 Just to illustrate what could possible get wrong in getMailbox, here is an implementation: 
 ```java
-	private Mailbox getMailbox(UserId id){
+	private Mailbox getMailbox(UserId id) {
 		Mailbox mailbox = cache.get(id);
-		if (mailbox == null){
+		if (mailbox == null) {
 			mailbox = new Mailbox();
 			cache.put(id, mailbox);
 		}
@@ -44,11 +44,11 @@ Luckily id-based-locking solves exactly this problem by locking the concept of t
 
 	IdBasedLockManager<UserId> manager = new SafeIdBasedLockManager<UserId>();
 	
-	public void sendMessageSafe(UserId from, UserId to, Message message){
+	public void sendMessageSafe(UserId from, UserId to, Message message) {
 
 		IdBasedLock<UserId> minLock = manager.obtainLock(min(from,to));
 		IdBasedLock<UserId> maxLock = manager.obtainLock(max(from,to));
-		try{
+		try {
 			minLock.lock();
 			maxLock.lock();
 			
@@ -56,7 +56,7 @@ Luckily id-based-locking solves exactly this problem by locking the concept of t
 			Mailbox recipientsBox = getMailbox(to);
 			sendersBox.addIncomingMessage(message);
 			recipientsBox.addSentMessage(message);
-		}finally{
+		} finally {
 			maxLock.unlock();
 			minLock.unlock();
 			
@@ -64,12 +64,12 @@ Luckily id-based-locking solves exactly this problem by locking the concept of t
 	}
 ```
 
-One might say, this example is to complicated, because it modifies two objects at a time. IdBasedLocking makes sense with one object too, consider this counter example:
+One might say, this example is to0 complicated, because it modifies two objects at a time. IdBasedLocking makes sense with one object too, consider this counter example:
 
 ```java
-	public void increaseCounterUnsafe(String id){
+	public void increaseCounterUnsafe(String id) {
 		Counter c = counterCache.get(id);
-		if (c == null){
+		if (c == null) {
 			c = new Counter();
 			counterCache.put(id, c);
 		}
@@ -79,18 +79,18 @@ One might say, this example is to complicated, because it modifies two objects a
 and again a safe version:
 
 ```java
-	public void increaseCounterSafely(String id){
+	public void increaseCounterSafely(String id) {
 		IdBasedLock<String> lock = lockManager.obtainLock(id);
 		lock.lock();
 		try{
 			Counter c = counterCache.get(id);
-			if (c == null){
+			if (c == null) {
 				c = new Counter();
 				counterCache.put(id, c);
 			}
 			c.increase();
 
-		}finally{
+		} finally {
 			lock.unlock();
 		}
 	}
