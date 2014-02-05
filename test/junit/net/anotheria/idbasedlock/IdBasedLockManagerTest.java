@@ -32,7 +32,7 @@ public class IdBasedLockManagerTest {
 	
 	class Worker {
 		
-		protected int iterations = 1000000;//100000;
+		protected int iterations = 10000000;//100000;
 		protected Random rnd = new Random(System.nanoTime());
 		protected long addedValue = 0;
 		
@@ -112,8 +112,10 @@ public class IdBasedLockManagerTest {
 		for (int i=0; i<COUNTERS; i++)
 			counters.put(""+i, new Counter());
 	}
-	private static long unsynchedErrors;
+
 	@Test public void testUnsynched(){
+		long unsynchedErrors;
+
 		CountDownLatch ready = new CountDownLatch(WORKERS);
 		CountDownLatch start = new CountDownLatch(1);
 		CountDownLatch finish = new CountDownLatch(WORKERS);
@@ -182,11 +184,54 @@ public class IdBasedLockManagerTest {
 		}
 		
 		System.out.println("Safely synched: Workers "+workersAdded+", Counters: "+countersCounted+" -> "+(workersAdded-countersCounted)+" in "+duration+" ms , ErrorRate: "+((double)(workersAdded-countersCounted)/workersAdded));
-		assertEquals(workersAdded,countersCounted);
+		assertEquals(workersAdded, countersCounted);
+		assertEquals(0, ((AbstractIdBasedLockManager) lockManager).getLockSize());
+
+	}
+	@Test public void testCtrie(){
+		long unsynchedErrors = 0;
+		CountDownLatch ready = new CountDownLatch(WORKERS);
+		CountDownLatch start = new CountDownLatch(1);
+		CountDownLatch finish = new CountDownLatch(WORKERS);
+		IdBasedLockManager lockManager = new CtrieIdBasedLockManager();
+
+		SynchedWorker[] workers = new SynchedWorker[WORKERS];
+		for (int i=0; i<WORKERS; i++){
+			workers[i] = new SynchedWorker(lockManager, ready, start, finish);
+			new Thread(workers[i]).start();
+		}
+
+		try{
+			ready.await();
+		}catch(InterruptedException e){}
+		long startTime = System.currentTimeMillis();
+		start.countDown();
+
+		try{
+			finish.await();
+		}catch(InterruptedException e){}
+		long duration = System.currentTimeMillis() - startTime;
+
+		long workersAdded = 0, countersCounted = 0;
+		for (SynchedWorker worker : workers){
+			workersAdded+=worker.getAddedValue();
+		}
+
+		for (Counter c : counters.values()){
+			countersCounted += c.getValue();
+		}
+
+		System.out.println("CTRIE synched: Workers " + workersAdded + ", Counters: " + countersCounted + " -> " + (workersAdded - countersCounted) + " in " + duration + " ms , ErrorRate: " + ((double) (workersAdded - countersCounted) / workersAdded));
+		assertFalse(workersAdded == countersCounted);
 		assertEquals(0, ((AbstractIdBasedLockManager)lockManager).getLockSize());
+		//System.out.println(unsynchedErrors+" "+unsynchedErrors/100);
+		assertTrue("expected "+unsynchedErrors/100+" errors, got "+(workersAdded-countersCounted),(workersAdded-countersCounted)<(unsynchedErrors/100));
+
+
 	}
 	
 	@Test public void testUnsafelySynched(){
+		long unsynchedErrors = 0;
 		CountDownLatch ready = new CountDownLatch(WORKERS);
 		CountDownLatch start = new CountDownLatch(1);
 		CountDownLatch finish = new CountDownLatch(WORKERS);
