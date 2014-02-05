@@ -13,11 +13,6 @@
   <name>IdBased Lock</name>
 
   <dependencies>
-      <dependency>
-          <groupId>com.romix</groupId>
-          <artifactId>java-concurrent-hash-trie-map</artifactId>
-          <version>0.0.1-SNAPSHOT</version>
-      </dependency>
   </dependencies>
 
   
