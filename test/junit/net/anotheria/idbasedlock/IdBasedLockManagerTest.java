@@ -32,7 +32,7 @@ public class IdBasedLockManagerTest {
 	
 	class Worker {
 		
-		protected int iterations = 1000000;//100000;
+		protected int iterations = 10000000;//100000;
 		protected Random rnd = new Random(System.nanoTime());
 		protected long addedValue = 0;
 		
@@ -150,6 +150,7 @@ public class IdBasedLockManagerTest {
 	}
 	
 	@Test public void testSafelySynched(){
+		long now = System.currentTimeMillis();
 		CountDownLatch ready = new CountDownLatch(WORKERS);
 		CountDownLatch start = new CountDownLatch(1);
 		CountDownLatch finish = new CountDownLatch(WORKERS);
@@ -184,6 +185,7 @@ public class IdBasedLockManagerTest {
 		System.out.println("Safely synched: Workers "+workersAdded+", Counters: "+countersCounted+" -> "+(workersAdded-countersCounted)+" in "+duration+" ms , ErrorRate: "+((double)(workersAdded-countersCounted)/workersAdded));
 		assertEquals(workersAdded,countersCounted);
 		assertEquals(0, ((AbstractIdBasedLockManager)lockManager).getLockSize());
+		System.out.println(System.currentTimeMillis()-now);
 	}
 	
 	@Test public void testUnsafelySynched(){
