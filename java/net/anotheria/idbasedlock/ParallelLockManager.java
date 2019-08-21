@@ -14,7 +14,7 @@ public class ParallelLockManager<T> {
     //    private ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
     //    private final Lock readLock = rwl.readLock();
     //    private final Lock writeLock = rwl.writeLock();
-    private StampedLock stampedLock = new StampedLock();
+//    private StampedLock stampedLock = new StampedLock();
 
     private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
@@ -35,13 +35,13 @@ public class ParallelLockManager<T> {
                 return;
             }
 
-            long stamp = stampedLock.writeLock();
+//            long stamp = stampedLock.writeLock();
             try {
                 locks.entrySet().removeIf(e -> e.getValue().getRefs() <= 0);
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                stampedLock.unlockWrite(stamp);
+//                stampedLock.unlockWrite(stamp);
                 //writeLock.unlock();
             }
         }
@@ -52,7 +52,7 @@ public class ParallelLockManager<T> {
             throw new IllegalArgumentException("getLock() failed: id can't be null");
         }
 
-        long stamp = stampedLock.readLock();
+//        long stamp = stampedLock.readLock();
         //                    readLock.lock();
         try {
             IdReentrantLock<T> lock = locks.computeIfAbsent(id, v -> new IdReentrantLock<>(id));
@@ -61,7 +61,7 @@ public class ParallelLockManager<T> {
 
             return lock;
         } finally {
-            stampedLock.unlockRead(stamp);
+//            stampedLock.unlockRead(stamp);
             ////            readLock.unlock();
         }
 
